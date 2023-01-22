@@ -1,5 +1,17 @@
 import random
 
+# Класс квестов
+class Quest:
+    def __init__(self, name, description, reward, completion_condition):
+        self.name = name
+        self.description = description
+        self.reward = reward
+        self.completion_condition = completion_condition
+
+    def check_completion(self, player):
+        return self.completion_condition(player)
+
+# Класс персонажа
 class Character:
     def __init__(self, name, level=1, hp=100, strength=10, agility=10, intelligence=10):
         self.name = name
@@ -11,6 +23,7 @@ class Character:
         self.xp = 0
         self.next_level_xp = 100
         self.inventory = {}
+        self.quests = []
 
     # Повышение уровня 
     def level_up(self):
@@ -44,6 +57,20 @@ class Character:
         damage = self.strength // 2
         enemy.take_damage(damage)
         print(f"{self.name} атакован {enemy.name} на {damage} единиц урона.")
+
+    # Функция получения квеста
+    def accept_quest(self, quest):
+        self.quests.append(quest)
+        print(f"{self.name} принял задание {quest.name}")
+        print(quest.description)
+
+    # Функция проверки задания  
+    def check_quests(self):
+        for quest in self.quests:
+            if quest.check_completion(self):
+                print(f"{self.name} завершил задание {quest.name}")
+                print(f"{self.name} получил {quest.reward}")
+                self.quests.remove(quest)
     
     # Функция характеристик персонажа
     def stats(self):
@@ -61,10 +88,16 @@ def create_character():
     name = input("Как зовут вашего персонажа ")
     return Character(name)
 
+# Пример квеста
+def has_sword(player):
+    return "меч" in player.inventory
+
+sword_quest = Quest("Верни мой меч", "Верни мой меч , который украли гоблины.", 50, has_sword)
+
 player = create_character()
 player.stats()
 
-# Пример геймплея (тесты)
+# Пример геймплея 
 enemy = Character("Гоблин", level=1, hp=50, strength=5, agility=5, intelligence=5)
 print("Впереди гоблин!")
 
@@ -74,7 +107,12 @@ while enemy.hp > 0:
     player.stats()
     enemy.stats()
 
+# Пример работы системы персонажа 
 player.gain_xp(50)
 print("Гоблин выронил меч , вы его подобрали.")
 player.inventory["меч"] = "Ржавый меч"
 player.stats()
+
+# Пример квеста
+player.accept_quest(sword_quest)
+player.check_quests()

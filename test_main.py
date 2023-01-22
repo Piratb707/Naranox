@@ -1,5 +1,5 @@
 import unittest
-from main import Character
+from main import *
 
 class TestCharacter(unittest.TestCase):
     def test_level_up(self):
@@ -46,6 +46,10 @@ class TestCharacter(unittest.TestCase):
         self.assertEqual(player.xp, 0)
         self.assertEqual(player.next_level_xp, 100)
         self.assertEqual(player.inventory, {})
+    
+    def test_quest(self):
+        player.accept_quest(sword_quest)
+        player.check_quests()
 
 if __name__ == '__main__':
     unittest.main()
